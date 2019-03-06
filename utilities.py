@@ -1,4 +1,5 @@
 from enum import Enum
+import json
 class DateSheetType(Enum):
 	tentative = 0
 	final = 1
@@ -8,7 +9,7 @@ class index:
 	@classmethod
 	def date_index(self, ds_type):
 		if ds_type == DateSheetType.tentative:
-			return [1,1]
+			return [4,0]
 		elif ds_type == DateSheetType.final:
 			return [15, 1]
 		else:
@@ -16,7 +17,7 @@ class index:
 	@classmethod
 	def morning_session_index(self, ds_type):
 		if ds_type == DateSheetType.tentative:
-			return [2, 0]
+			return [5, 0]
 		elif ds_type == DateSheetType.final:
 			return [16, 0]
 		else:
@@ -24,7 +25,7 @@ class index:
 	@classmethod
 	def evening_session_index(self, ds_type):
 		if ds_type == DateSheetType.tentative:
-			return [5, 0]
+			return [6, 0]
 		elif ds_type == DateSheetType.final:
 			return [17, 0]
 		else:
@@ -64,6 +65,11 @@ class keys:
 		else:
 			return '/'
 
+def add_zero(number: str):
+	if(len(number)==1):
+		return '0' + number
+	else:
+		return number
 def get_month_int(month: str):
 	if month == 'Jan' or month == 'January':
 		return '01'
@@ -184,3 +190,20 @@ def get_description(code: str) -> str:
 		"MCSP060":"Project"
 	}
 	return code_map.get(code, '')
+class Courses:
+		filename = ""
+		courses = []
+		def __init__(self, filename):
+			self.filename = filename
+			with open(filename, 'r') as file:
+				self.courses = json.loads(file.read())
+		def get_course(self, course_code: str):
+			for course in self.courses:
+				if course["code"] == course_code:
+					return course
+			return None
+		def get_title(self, course_code: str):
+			for course in self.courses:
+				if course["code"] == course_code:
+					return course["title"]
+			return ""
